@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Study Mode</title>
     <link rel="stylesheet" href="/dist/output.css">
+    <script src="main.js"></script>
 </head>
 <body class="w-64 h-64 ">
     <div class="flex flex-col min-h-screen  items-center">
         <div class="text-2xl mt-10">
-            Timer goes here
-            <script src=""></script> 
+            <h1>Timer</h1>
+            <select name="time" id="time">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
         </div>
         <div class="flex space-x-7">
+            <button id="startTimer">Start Timer</button>
             <img src="./icons/play.svg" alt="play button">
-            
 
             <img src="./icons/pause.svg" alt="pause button">
-             
 
             <img src="./icons/stop.svg" alt="stop button">
         </div>

@@ -4,14 +4,16 @@
     "description": "A chrome extension to help anyone that wants to enhance their study sessions",
     "permissions": [
         "tabs",
-        "storage"
+        "storage",
+        "activeTab"
     ],
     "version": "1.0",
     "action": {
         "default_popup": "index.html",
-        "default_icon": "spoodermen.png"
+        "default_icon": "./icons/spoodermen.png"
     },
     "background": {
-        "service_worker":"background.js"
+        "service_worker":"background.js",
+        "type": "module"
     }
 }
