@@ -8,17 +8,34 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 });
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request){
+    if (request.stopTimer){
+        chrome.storage.local.set({ timerRunning: false });
+        chrome.action.setBadgeText({ text: ''});
+    } 
+})
+
+chrome.runtime.onMessage.addListener(function(request) {
     if (request.startTimer) {
-        chrome.storage.local.set({timerRunning: true });
+        chrome.storage.local.set({ timerRunning: true });
+        // dont think i even need this line right here under
         // chrome.action.setBadgeText({ text: '5:00' });
         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
         
         
-        var timer = 300;
+        var timer =100;
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
+            chrome.runtime.onMessage.addListener(function(request){
+                if (!request.startTimer){
+                    clearInterval(intervalId);
+                    
+                    chrome.storage.local.set({ timerRunning: false});
+                    chrome.action.setBadgeText({ text: ''});
+                }
+            })
+            
             timer--;
             var minutes = Math.floor(timer/60);
             var seconds = timer % 60;
@@ -36,9 +53,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 chrome.action.setBadgeText({ text: ''});
                 chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });
             }
-        }, 1000);
-    } else if (request.restartTimer){
+            
+            
+            
+        }, 1000 );
+    } 
+    
+    else if (request.restartTimer){
         chrome.storage.local.set({ timerRunning: false });
         chrome.runtime.sendMessage({ startTimer: true });
-    }
-})
+    } 
+
+});
+
+
+
+async function toggleMuteState(tabId) {
+    const tab = await chrome.tabs.get(tabId);
+    const muted = !tab.mutedInfo.muted;
+    await chrome.tabs.update(tabId, {muted});
+    console.log(`Tab ${tab.id} is ${muted ? "muted" : "unmuted"}`);
+}
