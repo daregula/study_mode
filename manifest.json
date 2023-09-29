@@ -2,9 +2,16 @@
     "manifest_version": 3,
     "name": "Study Mode",
     "description": "A chrome extension to help anyone that wants to enhance their study sessions",
+    "permissions": [
+        "tabs",
+        "storage"
+    ],
     "version": "1.0",
     "action": {
         "default_popup": "index.html",
         "default_icon": "spoodermen.png"
+    },
+    "background": {
+        "service_worker":"background.js"
     }
 }
