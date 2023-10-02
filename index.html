@@ -10,19 +10,21 @@
 <body class="w-64 h-64 ">
     <div class="flex flex-col min-h-screen  items-center">
         <div class="text-2xl mt-10">
-            <h1>Timer</h1>
-            <select name="time" id="time">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
+        <!-- This is where the timer goes -->
+            <form action="" class="flex flex-col items-center">
+                <h1>Timer</h1>
+                <select name="time" id="time">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <button id="startTimer">Start Timer</button>
+                <button id="stopTimer">Stop Timer</button>
+            </form>
         </div>
         <div class="flex space-x-7">
-            <button id="startTimer">Start Timer</button>
-            <button id="stopTimer">Stop Timer</button>
-            <button id="bs">mute first tab</button>
             <img src="./icons/play.svg" alt="play button">
 
             <img src="./icons/pause.svg" alt="pause button">

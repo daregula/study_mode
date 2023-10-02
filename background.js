@@ -5,15 +5,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         // chrome.action.setBadgeText({ text: '' });
         chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });
     }
-
+        
 });
 
-chrome.runtime.onMessage.addListener(function(request){
-    if (request.stopTimer){
-        chrome.storage.local.set({ timerRunning: false });
-        chrome.action.setBadgeText({ text: ''});
-    } 
-})
 
 chrome.runtime.onMessage.addListener(function(request) {
     if (request.startTimer) {
@@ -22,8 +16,10 @@ chrome.runtime.onMessage.addListener(function(request) {
         // chrome.action.setBadgeText({ text: '5:00' });
         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
         
-        
-        var timer =100;
+        chrome.storage.local.get(['timerRunning']).then((result) => {
+            console.log('is the timer Running? ' + result.timerRunning);
+        });
+        var timer = 300;
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
