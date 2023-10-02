@@ -1,3 +1,4 @@
+
 // this function is listening in on the status of the timer while the tabs are active and when it "hears" that the timer has a status of "expired" it will change its color
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
@@ -8,18 +9,36 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         
 });
 
+chrome.runtime.onMessage.addListener((message) => {
+    chrome.storage.local.set({ timerValue: message.timerform });
+})
 
-chrome.runtime.onMessage.addListener(function(request) {
+chrome.runtime.onMessage.addListener(async function(request) {
     if (request.startTimer) {
         chrome.storage.local.set({ timerRunning: true });
-        // dont think i even need this line right here under
-        // chrome.action.setBadgeText({ text: '5:00' });
         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
         
-        chrome.storage.local.get(['timerRunning']).then((result) => {
-            console.log('is the timer Running? ' + result.timerRunning);
-        });
-        var timer = 300;
+        // using promises to get the timer value from our front end
+        const res = await chrome.storage.local.get(["timerValue"]);
+        // async function getTimerValue() {
+        //     try {
+        //         const res = await chrome.storage.local.get(["timerValue"]);
+        //         return res.timerValue;
+        //     } catch (error) {
+        //         console.error(error);
+        //         // Handle any errors that occur during the storage retrieval
+        //     }
+        // }
+        // const temp = await getTimerValue()
+        //     .then((value) => {
+        //         return value; // Use the resolved value here
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
+
+        var timer = parseInt(res.timerValue) * 60;
+        console.log(timer);
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
@@ -61,12 +80,3 @@ chrome.runtime.onMessage.addListener(function(request) {
     } 
 
 });
-
-
-
-async function toggleMuteState(tabId) {
-    const tab = await chrome.tabs.get(tabId);
-    const muted = !tab.mutedInfo.muted;
-    await chrome.tabs.update(tabId, {muted});
-    console.log(`Tab ${tab.id} is ${muted ? "muted" : "unmuted"}`);
-}

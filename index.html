@@ -11,18 +11,20 @@
     <div class="flex flex-col min-h-screen  items-center">
         <div class="text-2xl mt-10">
         <!-- This is where the timer goes -->
-            <form action="" class="flex flex-col items-center">
+            <form id="timerform" class="flex flex-col items-center">
                 <h1>Timer</h1>
-                <select name="time" id="time">
+                <select name="time" id="time" required>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select>
-                <button id="startTimer">Start Timer</button>
-                <button id="stopTimer">Stop Timer</button>
+                <button type="submit" id="startTimer">
+                    Start Timer
+                </button>
             </form>
+            <button id="stopTimer">Stop Timer</button>
         </div>
         <div class="flex space-x-7">
             <img src="./icons/play.svg" alt="play button">
