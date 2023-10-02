@@ -7,9 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('restart').addEventListener('click', function() {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-            chrome.runtime.sendMessage({ startTimer: true });
+            chrome.runtime.sendMessage({ startTimer: true, restart: true });
             window.close();
         });
     });
+
+
 
 });

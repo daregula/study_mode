@@ -3,7 +3,6 @@
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
         chrome.storage.local.set({ timerRunning: false });
-        // chrome.action.setBadgeText({ text: '' });
         chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });
     }
         
@@ -13,32 +12,19 @@ chrome.runtime.onMessage.addListener((message) => {
     chrome.storage.local.set({ timerValue: message.timerform });
 })
 
+
+
 chrome.runtime.onMessage.addListener(async function(request) {
     if (request.startTimer) {
+        
         chrome.storage.local.set({ timerRunning: true });
         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
         
         // using promises to get the timer value from our front end
         const res = await chrome.storage.local.get(["timerValue"]);
-        // async function getTimerValue() {
-        //     try {
-        //         const res = await chrome.storage.local.get(["timerValue"]);
-        //         return res.timerValue;
-        //     } catch (error) {
-        //         console.error(error);
-        //         // Handle any errors that occur during the storage retrieval
-        //     }
-        // }
-        // const temp = await getTimerValue()
-        //     .then((value) => {
-        //         return value; // Use the resolved value here
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
 
         var timer = parseInt(res.timerValue) * 60;
-        console.log(timer);
+        
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
