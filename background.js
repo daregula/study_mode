@@ -41,6 +41,10 @@ chrome.runtime.onMessage.addListener(async function(request) {
             var minutes = Math.floor(timer/60);
             var seconds = timer % 60;
             var text = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            chrome.runtime.sendMessage({ updateTimer: true, time: text });
+
+            
+            
             chrome.action.setBadgeText({ text: text });
             if (timer === 0) {
                 clearInterval(intervalId);
@@ -53,6 +57,7 @@ chrome.runtime.onMessage.addListener(async function(request) {
                 chrome.storage.local.set({ timerRunning: false});
                 chrome.action.setBadgeText({ text: ''});
                 chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });
+                chrome.runtime.sendMessage({ updateTimer: false, time: '0:00' });
             }
             
             
