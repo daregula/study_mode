@@ -7,33 +7,47 @@
     <link rel="stylesheet" href="/dist/output.css">
     <script src="main.js"></script>
 </head>
-<body class="w-64 h-64 ">
-    <div class="flex flex-col min-h-screen  items-center">
-        <div class="text-2xl mt-10">
-            <p id="runningTimer">Timer <!--timer goes here--> </p>
-            <form id="timerform" class="flex flex-col items-center">
-                <select name="time" id="time" required>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <button type="submit" id="startTimer">
-                    Start Timer
+<body class="w-64 h-[350px] overflow-scroll">
+    <div class="flex flex-col min-h-screen items-center gap-2">
+            <!-- <p id="runningTimer">running timer here </p> -->
+            <p class="text-base">Scroll wheel to select time</p>
+            <form id="timerform" class="flex flex-col items-center gap-2">
+                <div class="flex items-center justify-center">
+                    <div class="timer border rounded-lg p-4 bg-white">
+                        <div class="flex justify-center">
+                            <div id="minutes" class="text-2xl">00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-7">
+                    <button type="submit" id="startTimer">
+                        <img src="./icons/play.svg" alt="play button">
+                    </button>
+                    <button id="stopTimer">
+                        <img src="./icons/stop.svg" alt="stop button">
+                    </button>
+                </div>
+            </form>
+        <!-- add pause functionality -->
+        <!-- <div class="flex space-x-7">
+            <img src="./icons/pause.svg" alt="pause button">
+        </div> -->
+        <div>
+             <button id="start" class="bg-blue-500 rounded p-1 text-white">
+                Study Mode
+            </button>
+        </div>
+        <div class="flex flex-col items-center gap-3">
+            <h2>Enter your websites here</h2>
+            <form id="toOpen" class="flex flex-col items-center">
+                <input type="text" name="tabAddress" id="tabAddress" class="py-1 mb-2 bg-gray-50 rounded border-2"/>
+                <button type="submit" id="saveSites" class="bg-blue-500 rounded p-1 text-white">
+                    Submit
                 </button>
             </form>
-            <button id="stopTimer">Stop Timer</button>
-        </div>
-        <div class="flex space-x-7">
-            <img src="./icons/play.svg" alt="play button">
-
-            <img src="./icons/pause.svg" alt="pause button">
-
-            <img src="./icons/stop.svg" alt="stop button">
-        </div>
-        <div>
-             
+            <button id="seeSites" class="bg-blue-500 rounded p-1 text-white">
+                Check Saved Sites
+            </button>
         </div>
     </div>
 </body>
