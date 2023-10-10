@@ -1,33 +1,16 @@
-// this function is listening in on the status of the timer while the tabs are active and when it "hears" that the timer has a status of "expired" it will change its color
-// const testing = async () => {
-//     try {
-//         // this is storing in local storage
-//         await chrome.storage.local.set({ test: 'this is a test ' }, (() => {
-//             console.log('value is set');
-//         }));
-        
-//         // this is retrieving in local storage
-//         const bs = await chrome.storage.local.get(['test'])
 
-//         // this is removing in local storage
-//         chrome.storage.local.remove(['test'], (() => {
-//             console.log('value '+ bs.test +' is removed');
-//         }));
-
-
-//     } catch (error) {
-//         console.error();
-//     }
-// }
-// testing();
+chrome.storage.local.clear();
 const checkStorage = async () => {
     try {
         const isAlive = await chrome.storage.local.get(['urls'])
-
-        if (isAlive === undefined || isAlive == {}){
+        if (isAlive.urls === undefined || isAlive.urls == {}){
             await chrome.storage.local.set({ urls: [] }, (() => {
                 console.log("local url storage space is allocated");
             }));
+        }
+        else {
+            const bs = await chrome.storage.local.get(['urls'])
+            console.log('current list of urls in local storage: ' + bs.urls);
         }
     } catch (error) {
         console.log(error);
@@ -35,23 +18,39 @@ const checkStorage = async () => {
 }
 checkStorage();
 
-try {
-    chrome.runtime.onMessage.addListener(async (message) => {
-        // await chrome.storage.local.get()
-    })
-} catch (error) {
-    console.error();
-}
-
-
-
 // retrieving a message saying open tab true to see if we can open a tab with the chrome api
+chrome.runtime.onMessage.addListener(async (message) => {
+    try {
+        if (message.toOpen){
+            let bs = await chrome.storage.local.get(['urls'])
+            bs.urls.push('https://'+message.user_url)
+            await chrome.storage.local.set({ urls: bs.urls })
+            const updatedArr = await chrome.storage.local.get(['urls'])
+            console.log(updatedArr.urls);
+            
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 chrome.runtime.onMessage.addListener((message) => {
     if (message.openTab){
         chrome.tabs.create({
             url: 'https://www.youtube.com/'
         })
+    }
+})
+
+
+chrome.runtime.onMessage.addListener((message) => {
+    if (message.seeSites){
+        chrome.windows.create({
+            'url': 'alert.html',
+            'type': 'popup',
+            'width': 250,
+            'height': 250
+        });
     }
 })
 

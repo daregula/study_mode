@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded',function() {
         event.preventDefault();
 
         const user_url = document.getElementById('tabAddress').value;
-        chrome.runtime.sendMessage({ 'user_url': user_url})
+        chrome.runtime.sendMessage({ user_url: user_url, toOpen: true})
     })
 
-    // our countdown timer that shows up in the front end of the extension but for now were going to comment this out unitl
+    // our countdown timer that shows up in the front-end of the extension but for now were going to comment this out unitl
     // we can fix the dumbass bug
         
     chrome.runtime.onMessage.addListener((req) => {
@@ -92,7 +92,11 @@ document.addEventListener('DOMContentLoaded',function() {
         event.preventDefault();
         chrome.runtime.sendMessage({ openTab: true })
     })
-
+    
+    document.getElementById('seeSites').addEventListener('click', (event) => {
+        event.preventDefault();
+        chrome.runtime.sendMessage({ seeSites: true })
+    })
 
 
 });
