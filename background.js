@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener((message) => {
 chrome.runtime.onMessage.addListener((message) => {
     if (message.seeSites){
         chrome.windows.create({
-            'url': 'alert.html',
+            'url': 'savedSites.html',
             'type': 'popup',
             'width': 250,
             'height': 250

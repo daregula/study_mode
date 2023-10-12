@@ -92,11 +92,11 @@ document.addEventListener('DOMContentLoaded',function() {
         event.preventDefault();
         chrome.runtime.sendMessage({ openTab: true })
     })
-    
+
+    // open saved sites popup
     document.getElementById('seeSites').addEventListener('click', (event) => {
         event.preventDefault();
         chrome.runtime.sendMessage({ seeSites: true })
     })
-
 
 });
