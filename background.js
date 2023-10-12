@@ -34,14 +34,30 @@ chrome.runtime.onMessage.addListener(async (message) => {
     }
 })
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener(async (message) => {
     if (message.openTab){
-        chrome.tabs.create({
+        // check if they have saved anything to local storage
+        async function checkUrls(){
+            const userSavedUrls = await chrome.storage.local.get(['urls'])
+            console.log(userSavedUrls.urls);
+            return userSavedUrls.urls.length != 0 && userSavedUrls.urls != undefined ? true : false
+
+        }
+        
+        // now we need to map through the urls and create a url tab for each one
+        const hasURls = await checkUrls();
+        console.log(hasURls);
+        if (hasURls){
+            chrome.tabs.create({
             url: 'https://www.youtube.com/'
-        })
+            })
+        }
+        else {
+            chrome.runtime.sendMessage({ hasUrls: hasURls })
+        }
+        
     }
 })
-
 
 chrome.runtime.onMessage.addListener((message) => {
     if (message.seeSites){
@@ -55,7 +71,7 @@ chrome.runtime.onMessage.addListener((message) => {
 })
 
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function(changeInfo) {
     if (changeInfo.status === 'complete') {
         chrome.storage.session.set({ timerRunning: false });
         chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });

@@ -99,4 +99,13 @@ document.addEventListener('DOMContentLoaded',function() {
         chrome.runtime.sendMessage({ seeSites: true })
     })
 
+    chrome.runtime.onMessage.addListener((req) => {
+        if (!req.hasUrls){
+            document.getElementById('warning').innerHTML = 'You do not have any saved urls yet'
+        }
+        else{
+            document.getElementById('warning').innerHTML = ''
+        }
+    })
+
 });
