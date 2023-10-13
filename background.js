@@ -70,6 +70,17 @@ chrome.runtime.onMessage.addListener((message) => {
     }
 })
 
+// grabbing the url to delete and popping it from storage
+chrome.runtime.onMessage.addListener((message) => {
+    if (message.confirm_delete){
+        const url_ID = message.remove_url;
+        console.log(url_ID);
+        // const removeFromStorage = async url_ID => {
+
+        // };
+    }
+})
+
 
 chrome.tabs.onUpdated.addListener(function(changeInfo) {
     if (changeInfo.status === 'complete') {
