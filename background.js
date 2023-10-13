@@ -35,7 +35,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
 })
 
 chrome.runtime.onMessage.addListener(async (message) => {
-    if (message.openTab){
+    try {
+        if (message.openTab){
         // check if they have saved anything to local storage
         async function checkUrls(){
             const userSavedUrls = await chrome.storage.local.get(['urls'])
@@ -53,10 +54,14 @@ chrome.runtime.onMessage.addListener(async (message) => {
             })
         }
         else {
-            chrome.runtime.sendMessage({ hasUrls: hasURls })
+            chrome.runtime.sendMessage({ url_msg: true, hasUrls: hasURls })
         }
         
+        }
+    } catch (error) {
+        console.log(error);
     }
+    
 })
 
 chrome.runtime.onMessage.addListener((message) => {
@@ -71,14 +76,21 @@ chrome.runtime.onMessage.addListener((message) => {
 })
 
 // grabbing the url to delete and popping it from storage
-chrome.runtime.onMessage.addListener((message) => {
-    if (message.confirm_delete){
-        const url_ID = message.remove_url;
-        console.log(url_ID);
-        // const removeFromStorage = async url_ID => {
-
-        // };
+chrome.runtime.onMessage.addListener(async (message) => {
+    try {
+        if (message.confirm_delete) {
+            const url_ID = message.remove_url;
+            console.log(url_ID);
+            const urls = (await chrome.storage.local.get(['urls'])).urls
+            urls.splice(url_ID, 1)
+            await chrome.storage.local.set({ urls: urls })
+            const updatedArr = await chrome.storage.local.get(['urls'])
+            console.log("new arr: "+updatedArr.urls);
+        }
+    } catch (error) {
+        console.log(error);
     }
+    
 })
 
 
@@ -110,12 +122,16 @@ chrome.runtime.onMessage.addListener(async function(request) {
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
-            chrome.runtime.onMessage.addListener(function(request){
-                if (!request.startTimer){
+
+            // dont think ill ever need below code but gonna keep for now
+            // will reset the timer anytime any other message is recieved
+            chrome.runtime.onMessage.addListener((request) => {
+                if (request.stopTimer){
                     clearInterval(intervalId);
                     
                     chrome.storage.session.set({ timerRunning: false});
                     chrome.action.setBadgeText({ text: ''});
+
                 }
             })
             
@@ -124,18 +140,6 @@ chrome.runtime.onMessage.addListener(async function(request) {
             var seconds = timer % 60;
             var text = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 
-            // for now keep this commented out
-
-            // const finalTest = async () => {
-            //     try {
-            //         await chrome.runtime.sendMessage({ updateTimer: true, time: text });
-                    
-            //     } catch (error) {
-            //         console.log("hate this -> " + error);
-            //     }
-            // }
-            
-            // finalTest();
             
             
             chrome.action.setBadgeText({ text: text });
@@ -150,8 +154,7 @@ chrome.runtime.onMessage.addListener(async function(request) {
                 chrome.storage.session.set({ timerRunning: false});
                 chrome.action.setBadgeText({ text: ''});
                 chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });
-                // this is tied to above bug same shit
-                // chrome.runtime.sendMessage({ updateTimer: false, time: '0:00' });
+                
             }
             
             
@@ -159,9 +162,7 @@ chrome.runtime.onMessage.addListener(async function(request) {
     } 
     
     else if (request.restartTimer){
-        chrome.storage.session.set({ timerRunning: false });
-        
-        // chrome.runtime.sendMessage({ startTimer: true });
+        chrome.storage.session.set({ timerRunning: false });        
     } 
-
+    
 });

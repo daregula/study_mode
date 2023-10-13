@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
             button.addEventListener('click', (event) => {
                 event.preventDefault();
                 const url_ID = button.getAttribute('value');
-                chrome.runtime.sendMessage({ confirm_delete: true, remove_url: url_ID }) 
+                chrome.runtime.sendMessage({ confirm_delete: true, remove_url: url_ID })
+                
             })
         })
     })

@@ -47,17 +47,11 @@ document.addEventListener('DOMContentLoaded',function() {
 
 
     document.getElementById('startTimer').addEventListener('click', () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, () => {
             chrome.runtime.sendMessage({ startTimer: true });
-            
-        });
     });
     
     document.getElementById('stopTimer').addEventListener('click', () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, () => {
-            chrome.runtime.sendMessage({ startTimer: false });
-            
-        })
+            chrome.runtime.sendMessage({ stopTimer: true });
     });
 
     // grabbing changes from the timer form and sending a message over to through our runtime interface
@@ -76,15 +70,7 @@ document.addEventListener('DOMContentLoaded',function() {
         chrome.runtime.sendMessage({ user_url: user_url, toOpen: true})
     })
 
-    // our countdown timer that shows up in the front-end of the extension but for now were going to comment this out unitl
-    // we can fix the dumbass bug
-        
-    chrome.runtime.onMessage.addListener((req) => {
-        if (req.updateTimer){
-            document.getElementById('runningTimer').innerHTML = req.time
-        }
-        
-    })    
+    
 
     // grabbing the id of our study button to see if we can trigger a test opening of a tab that we will manually input
 
@@ -100,11 +86,13 @@ document.addEventListener('DOMContentLoaded',function() {
     })
 
     chrome.runtime.onMessage.addListener((req) => {
-        if (!req.hasUrls){
-            document.getElementById('warning').innerHTML = 'You do not have any saved urls yet'
-        }
-        else{
-            document.getElementById('warning').innerHTML = ''
+        if (req.url_msg){
+            if (!req.hasUrls){
+                document.getElementById('warning').innerHTML = 'You do not have any saved urls yet'
+            }
+            else{
+                document.getElementById('warning').innerHTML = ''
+            }
         }
     })
 
