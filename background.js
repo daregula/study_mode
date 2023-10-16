@@ -41,17 +41,23 @@ chrome.runtime.onMessage.addListener(async (message) => {
         async function checkUrls(){
             const userSavedUrls = await chrome.storage.local.get(['urls'])
             console.log(userSavedUrls.urls);
-            return userSavedUrls.urls.length != 0 && userSavedUrls.urls != undefined ? true : false
+            return userSavedUrls.urls.length != 0 && userSavedUrls.urls != undefined ? 
+            { 
+                status: true,
+                urls: userSavedUrls.urls 
+            } : false
 
         }
         
         // now we need to map through the urls and create a url tab for each one
         const hasURls = await checkUrls();
-        console.log(hasURls);
-        if (hasURls){
-            chrome.tabs.create({
-            url: 'https://www.youtube.com/'
-            })
+        // map through our urls that are saved in local storage
+        if (hasURls.status){
+            hasURls.urls.map((url) => {
+                chrome.tabs.create({
+                    url: `${url}`
+                }) 
+            })            
         }
         else {
             chrome.runtime.sendMessage({ url_msg: true, hasUrls: hasURls })
