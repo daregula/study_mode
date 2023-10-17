@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded',function() {
         
     });
 
+   
+
     // getting a saved website from the user to pass as a url to the tab create function
     document.getElementById('toOpen').addEventListener('submit', (event) => {
         event.preventDefault();

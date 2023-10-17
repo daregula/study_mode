@@ -1,4 +1,3 @@
-
 chrome.storage.local.clear();
 const checkStorage = async () => {
     try {
@@ -17,17 +16,22 @@ const checkStorage = async () => {
     }
 }
 checkStorage();
-
 // retrieving a message saying open tab true to see if we can open a tab with the chrome api
 chrome.runtime.onMessage.addListener(async (message) => {
     try {
         if (message.toOpen){
+            chrome.windows.create({
+                'url': 'add_url.html',
+                'type': 'popup',
+                'width': 250,
+                'height': 250
+            });
             let bs = await chrome.storage.local.get(['urls'])
             bs.urls.push('https://'+message.user_url)
             await chrome.storage.local.set({ urls: bs.urls })
             const updatedArr = await chrome.storage.local.get(['urls'])
             console.log(updatedArr.urls);
-            
+            chrome.runtime.sendMessage({ display_url: true })
         }
     } catch (error) {
         console.log(error);

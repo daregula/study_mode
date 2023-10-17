@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>add Url</title>
+    <script src="add_url.js"></script>
+</head>
+<body>
+    <div class="flex flex-col gap-4">
+        <p class="text-lg" id="current_url">
+            Current Url:
+        </p>
+        <form id="url_form">
+            <label><input type="checkbox" value="mon" name="day">Monday</label>
+            <label><input type="checkbox" value="tue" name="day">Tuesday</label>
+            <label><input type="checkbox" value="wed" name="day">Wednesday</label>
+            <label><input type="checkbox" value="thu" name="day">Thursday</label>
+            <label><input type="checkbox" value="fri" name="day">Friday</label>
+            <label><input type="checkbox" value="sat" name="day">Saturday</label>
+            <label><input type="checkbox" value="sun" name="day">Sunday</label>
+            <button 
+                type="button" 
+                id="everyday" 
+                class="bg-blue-500 rounded p-1 text-white"
+            >
+                EveryDay
+            </button>
+            <button 
+                type="submit" 
+                id="submit" 
+                class="bg-blue-500 rounded p-1 text-white"
+            >
+                Submit
+            </button>
+        </form>
+    </div>
+</body>
+</html>
