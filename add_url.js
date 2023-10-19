@@ -10,29 +10,26 @@ document.addEventListener('DOMContentLoaded', function() {
         if (message.display_url){
                 document.getElementById('current_url').innerHTML = message.current_url
                 const form = document.getElementById('url_form');
-                
+
                 form.addEventListener('submit', (event) => {
                     event.preventDefault();
+                    // process the data then send it over to the background script
 
                     const days = form.elements['day[]'];
                     const start_times = form.elements['start_time[]'];
                     const end_times = form.elements['end_time[]'];
 
-                    const selectedData = [];
+                    const selectedData = {};
 
                     for (let i = 0; i < days.length; i++) {
-                        if (days[i].checked){
-                            selectedData.push({
-                                day: days[i].value,
+                        if (days[i].checked) {
+                            selectedData[days[i].value] = {
                                 start_time: start_times[i].value,
                                 end_time: end_times[i].value
-                            })
+                            }
                         }
                     }
                     
-                    // process the data then send it over to the background script
-
-
                     chrome.runtime.sendMessage({ res_day_data: true, day_data: selectedData, user_url: message.current_url })
                 });
             }
