@@ -9,14 +9,31 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.runtime.onMessage.addListener((message) => {
         if (message.display_url){
                 document.getElementById('current_url').innerHTML = message.current_url
-                document.getElementById('url_form').addEventListener('submit', (event) => {
+                const form = document.getElementById('url_form');
+                
+                form.addEventListener('submit', (event) => {
                     event.preventDefault();
-                    let day_data = document.querySelectorAll('input[name="day"]:checked');
-                    day_data = Array.from(day_data).map(x => x.value)
+
+                    const days = form.elements['day[]'];
+                    const start_times = form.elements['start_time[]'];
+                    const end_times = form.elements['end_time[]'];
+
+                    const selectedData = [];
+
+                    for (let i = 0; i < days.length; i++) {
+                        if (days[i].checked){
+                            selectedData.push({
+                                day: days[i].value,
+                                start_time: start_times[i].value,
+                                end_time: end_times[i].value
+                            })
+                        }
+                    }
+                    
                     // process the data then send it over to the background script
 
 
-                    chrome.runtime.sendMessage({ res_day_data: true, day_data: day_data, user_url: message.current_url })
+                    chrome.runtime.sendMessage({ res_day_data: true, day_data: selectedData, user_url: message.current_url })
                 });
             }
             else{

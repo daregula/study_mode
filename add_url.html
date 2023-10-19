@@ -10,14 +10,63 @@
 <body>
     <div class="flex flex-col gap-4">
         <p class="text-lg" id="current_url"></p>
-        <form id="url_form">
-            <label><input type="checkbox" value="mon" name="day">Monday</label>
-            <label><input type="checkbox" value="tue" name="day">Tuesday</label>
-            <label><input type="checkbox" value="wed" name="day">Wednesday</label>
-            <label><input type="checkbox" value="thu" name="day">Thursday</label>
-            <label><input type="checkbox" value="fri" name="day">Friday</label>
-            <label><input type="checkbox" value="sat" name="day">Saturday</label>
-            <label><input type="checkbox" value="sun" name="day">Sunday</label>
+        <form id="url_form" class="flex flex-col gap-4">
+            <div>
+                <label for="day[]">Monday</label>
+
+                <input type="checkbox" value="mon" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
+            <div>
+                <label for="day[]">Tuesday</label>
+                
+                <input type="checkbox" value="tue" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
+            <div>
+                <label for="day[]">Wednesday</label>
+                
+                <input type="checkbox" value="wed" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
+            <div>
+                <label for="day[]">Thursday</label>
+                
+                <input type="checkbox" value="thu" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
+            <div>
+                <label for="day[]">Friday</label>
+                
+                <input type="checkbox" value="fri" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
+            <div>
+                <label for="day[]">Saturday</label>
+                
+                <input type="checkbox" value="sat" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
+            <div>
+                <label for="day[]">Sunday</label>
+                
+                <input type="checkbox" value="sun" name="day[]">
+                <br>
+                From: <input type="time" name="start_time[]">
+                To: <input type="time" name="end_time[]">
+            </div>
             <button 
                 type="button" 
                 id="everyday" 
