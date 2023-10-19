@@ -16,15 +16,12 @@ const checkStorage = async () => {
     }
 }
 checkStorage();
-// retrieving a message saying open tab true to see if we can open a tab with the chrome api
+// retrieving a message saying open tab true to see if we can open a tab with the chrome api     
 chrome.runtime.onMessage.addListener(async (message) => {
     try {
         if (message.toOpen){
-            let bs = await chrome.storage.local.get(['urls'])
-            bs.urls.push('https://'+message.user_url)
-            await chrome.storage.local.set({ urls: bs.urls })
-            const updatedArr = await chrome.storage.local.get(['urls'])
-            console.log(updatedArr.urls);
+            const current_url = 'https://'+message.user_url           
+            console.log(current_url);
             chrome.windows.create({
                 'url': 'add_url.html',
                 'type': 'popup',
@@ -33,7 +30,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
             });
             chrome.runtime.onMessage.addListener((message) => {
                 if (message.popUpOpen){
-                    chrome.runtime.sendMessage({ display_url: true })
+                    chrome.runtime.sendMessage({ display_url: true, current_url: current_url })
                 }
             })
             
@@ -42,6 +39,29 @@ chrome.runtime.onMessage.addListener(async (message) => {
         console.log(error);
     }
 })
+//grabbing all of the days data and saving it to local storage
+// need to structure the days data and tie it to a url
+chrome.runtime.onMessage.addListener(async (message) => {
+    try {
+        if(message.res_day_data){
+            let bs = await chrome.storage.local.get(['urls'])
+            bs.urls.push(
+                {
+                    address: message.user_url,
+                    toOpen: message.day_data
+                }
+            )
+            await chrome.storage.local.set({ urls: bs.urls })
+            const updatedArr = await chrome.storage.local.get(['urls'])
+            console.log(updatedArr.urls);
+
+        }
+    } catch (error) {
+        
+    }
+});
+
+
 
 chrome.runtime.onMessage.addListener(async (message) => {
     try {
