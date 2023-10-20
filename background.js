@@ -5,6 +5,7 @@ const checkStorage = async () => {
         if (isAlive.urls === undefined || isAlive.urls == {}){
             await chrome.storage.local.set({ urls: [] }, (() => {
                 console.log("local url storage space is allocated");
+        
             }));
         }
         else {
@@ -54,6 +55,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
             await chrome.storage.local.set({ urls: bs.urls })
             const updatedArr = await chrome.storage.local.get(['urls'])
             console.log(updatedArr.urls);
+            
 
         }
     } catch (error) {
@@ -61,24 +63,76 @@ chrome.runtime.onMessage.addListener(async (message) => {
     }
 });
 
+/* create a function that will validate the urls depending on our current date time
+ if valid then we append to an array that we will then map through to create tabs from it
+ current stored urls structure
+ urls = [
+    {
+        address: 'url',
+        toOpen: 
+        {
+            day_of_the_week(mon): 
+            {
+                startTime: '12:00',
+                endTime: '14:00'
+            },
+            day_of_the_week(wed): 
+            {
+                startTime: '15:00',
+                endTime: '18:00'
+            }
+        }
+    }
+ ]
+ 
+*/ 
+const validateURLs = async () => {
+    const updatedArr = await chrome.storage.local.get(['urls']);
+    const date = new Date();
+    const day = date.toDateString().slice(0,3).toLowerCase();
+    const hour = date.getHours();
+    const min = date.getMinutes();
 
+    const current_time = hour * 60 + min;
+
+    let validUrls = [];
+    updatedArr.urls.map((urlOBJ) => {
+        if (urlOBJ.toOpen.hasOwnProperty(day)){
+            const current_start_time = Number(urlOBJ.toOpen[day].start_time.slice(0,2)) * 60 + Number(urlOBJ.toOpen[day].start_time.slice(3,5));
+
+            const current_end_time = Number(urlOBJ.toOpen[day].end_time.slice(0,2)) * 60 + Number(urlOBJ.toOpen[day].end_time.slice(3,5));
+
+            if (
+                (current_start_time <= current_end_time && current_time >= current_start_time && current_time <= current_end_time) ||
+                (current_start_time > current_end_time && (current_time >= current_start_time || current_time <= current_end_time))
+            )
+            {
+                validUrls.push(urlOBJ.address);
+            }
+        } 
+    });
+
+    await chrome.storage.local.set({ valid_urls: validUrls})
+    
+} 
 
 chrome.runtime.onMessage.addListener(async (message) => {
     try {
         if (message.openTab){
         // check if they have saved anything to local storage
         async function checkUrls(){
-            const userSavedUrls = await chrome.storage.local.get(['urls'])
-            console.log(userSavedUrls.urls);
-            return userSavedUrls.urls.length != 0 && userSavedUrls.urls != undefined ? 
+            const userSavedUrls = await chrome.storage.local.get(['valid_urls'])
+            console.log(userSavedUrls.valid_urls);
+            return userSavedUrls.valid_urls.length != 0 && userSavedUrls.valid_urls != undefined ? 
             { 
                 status: true,
-                urls: userSavedUrls.urls 
+                urls: userSavedUrls.valid_urls 
             } : false
 
         }
         
         // now we need to map through the urls and create a url tab for each one
+        await validateURLs();
         const hasURls = await checkUrls();
         // map through our urls that are saved in local storage
         if (hasURls.status){
