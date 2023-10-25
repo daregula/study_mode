@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded',function() {
 
 
-    const minutesElement = document.getElementById('minutes');
+    let minutesElement = document.getElementById('minutes');
     
 
     let minutes = 0;
@@ -45,24 +45,15 @@ document.addEventListener('DOMContentLoaded',function() {
     // Initialize the timer display
     updateTimerDisplay();
 
-
+    
+    // grabbing changes from the timer form and sending a message over to through our runtime interface
     document.getElementById('startTimer').addEventListener('click', () => {
-            chrome.runtime.sendMessage({ startTimer: true });
+        chrome.runtime.sendMessage({ startTimer: true, timerform: minutes });
     });
     
     document.getElementById('stopTimer').addEventListener('click', () => {
             chrome.runtime.sendMessage({ stopTimer: true });
     });
-
-    // grabbing changes from the timer form and sending a message over to through our runtime interface
-    document.getElementById('timerform').addEventListener('submit', (event) => {
-        event.preventDefault();
-        // const timevalue = document.getElementById('time').value;
-        chrome.runtime.sendMessage({ timerform: minutes });
-        
-    });
-
-   
 
     // getting a saved website from the user to pass as a url to the tab create function
     document.getElementById('toOpen').addEventListener('submit', (event) => {
@@ -90,7 +81,7 @@ document.addEventListener('DOMContentLoaded',function() {
     chrome.runtime.onMessage.addListener((req) => {
         if (req.url_msg){
             if (!req.hasUrls){
-                document.getElementById('warning').innerHTML = 'You do not have any saved urls yet'
+                document.getElementById('warning').innerHTML = 'You do not have any saved urls scheduled to open at this time'
             }
             else{
                 document.getElementById('warning').innerHTML = ''

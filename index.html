@@ -11,7 +11,7 @@
     <div class="flex flex-col min-h-screen items-center gap-2">
             <!-- <p id="runningTimer">running timer here </p> -->
             <p class="text-base">Scroll wheel to select time</p>
-            <form id="timerform" class="flex flex-col items-center gap-2">
+            <div id="timerform" class="flex flex-col items-center gap-2">
                 <div class="flex items-center justify-center">
                     <div class="timer border rounded-lg p-4 bg-white">
                         <div class="flex justify-center">
@@ -20,14 +20,14 @@
                     </div>
                 </div>
                 <div class="flex space-x-7">
-                    <button type="submit" id="startTimer">
+                    <button id="startTimer">
                         <img src="./icons/play.svg" alt="play button">
                     </button>
                     <button id="stopTimer">
                         <img src="./icons/stop.svg" alt="stop button">
                     </button>
                 </div>
-            </form>
+            </div>
         <!-- add pause functionality -->
         <!-- <div class="flex space-x-7">
             <img src="./icons/pause.svg" alt="pause button">

@@ -191,27 +191,17 @@ chrome.tabs.onUpdated.addListener(function(changeInfo) {
         
 });
 
-chrome.runtime.onMessage.addListener((message) => {
-    chrome.storage.session.set({ timerValue: message.timerform });
-})
-
-
-
 chrome.runtime.onMessage.addListener(async function(request) {
     if (request.startTimer) {
         
         chrome.storage.session.set({ timerRunning: true });
         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
-        
-        // using promises to get the timer value from our front end
-        const res = await chrome.storage.session.get(["timerValue"]);
-
-        var timer = parseInt(res.timerValue) * 60;
+                
+        var timer = request.timerform * 60;
         
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
-
             // dont think ill ever need below code but gonna keep for now
             // will reset the timer anytime any other message is recieved
             chrome.runtime.onMessage.addListener((request) => {
@@ -248,10 +238,6 @@ chrome.runtime.onMessage.addListener(async function(request) {
             
             
         }, 1000 );
-    } 
-    
-    else if (request.restartTimer){
-        chrome.storage.session.set({ timerRunning: false });        
     } 
     
 });
