@@ -192,35 +192,55 @@ chrome.tabs.onUpdated.addListener(function(changeInfo) {
 });
 
 chrome.runtime.onMessage.addListener(async function(request) {
-    if (request.startTimer) {
-        
+    const timerStat = await chrome.storage.session.get(['timerRunning']);
+    let resumeTime = request.timerform
+
+    const isPaused = await chrome.storage.session.get(['pauseTimer']);
+    
+    if (request.startTimer && resumeTime > 0 && !timerStat.timerRunning) {
+
+        if (isPaused.pauseTimer === true){
+            const pausedAt = await chrome.storage.session.get(['pauseValue']);
+            resumeTime = pausedAt.pauseValue / 60;
+            chrome.storage.session.set({ pauseTimer: false });
+        }
         chrome.storage.session.set({ timerRunning: true });
         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
-                
-        var timer = request.timerform * 60;
+        
+        
+        var timer = resumeTime * 60;
         
         // creating an interval to run our timer function that will in realtime set the new time every 1 second
         // we created the call back function 
         var intervalId = setInterval(function() {
             // dont think ill ever need below code but gonna keep for now
             // will reset the timer anytime any other message is recieved
-            chrome.runtime.onMessage.addListener((request) => {
-                if (request.stopTimer){
-                    clearInterval(intervalId);
-                    
-                    chrome.storage.session.set({ timerRunning: false});
-                    chrome.action.setBadgeText({ text: ''});
-
-                }
-            })
-            
             timer--;
             var minutes = Math.floor(timer/60);
             var seconds = timer % 60;
             var text = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 
+            chrome.runtime.onMessage.addListener((request) => {
+                if (request.stopTimer){
+                    clearInterval(intervalId);
+                    
+                    chrome.storage.session.set({ timerRunning: false});
+                    chrome.storage.session.set({ pauseTimer: false });
+                    chrome.action.setBadgeText({ text: ''});
+
+                }
+            });
+            console.log(timer);
+            chrome.runtime.onMessage.addListener((message) => {
+                if (message.pauseTimer){
+                    clearInterval(intervalId);
+                    
+                    chrome.storage.session.set({ pauseTimer: true, pauseValue: timer, timerRunning: false })
+                    chrome.action.setBadgeText({ text: text })
+                }
+            });
             
-            
+
             chrome.action.setBadgeText({ text: text });
             if (timer === 0) {
                 clearInterval(intervalId);

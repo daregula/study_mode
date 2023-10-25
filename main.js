@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded',function() {
     document.getElementById('startTimer').addEventListener('click', () => {
         chrome.runtime.sendMessage({ startTimer: true, timerform: minutes });
     });
+
+    document.getElementById('pauseTimer').addEventListener('click', () => {
+        chrome.runtime.sendMessage({ pauseTimer: true});
+    });
     
     document.getElementById('stopTimer').addEventListener('click', () => {
             chrome.runtime.sendMessage({ stopTimer: true });
