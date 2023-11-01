@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const fetchUrls = async () => {
             const user_urls = await chrome.storage.local.get(['urls'])
-            document.getElementById('user_saved_urls').innerHTML = user_urls.urls.map((url, idx) => "<li id='URL'>" + url + `"</li><img src='./icons/trash.svg' alt='trash icon' class='h-4 w-8 hover:cursor-pointer delete_btn' value='${idx}'/>"`)
+            document.getElementById('user_saved_urls').innerHTML = user_urls.urls.map((url, idx) => "<li id='URL'>" + `${url.address}` + `"</li><img src='./icons/trash.svg' alt='trash icon' class='h-4 w-8 hover:cursor-pointer delete_btn' value='${idx}'/>"`)
         }
         await fetchUrls();
 

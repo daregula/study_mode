@@ -14,22 +14,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.addEventListener('submit', (event) => {
                     event.preventDefault();
                     // process the data then send it over to the background script
-
+                    const isCustom = document.activeElement.getAttribute('value')
                     const days = form.elements['day[]'];
-                    const start_times = form.elements['start_time[]'];
-                    const end_times = form.elements['end_time[]'];
+                    let selectedData = {};
 
-                    const selectedData = {};
-
-                    for (let i = 0; i < days.length; i++) {
-                        if (days[i].checked) {
-                            selectedData[days[i].value] = {
-                                start_time: start_times[i].value,
-                                end_time: end_times[i].value
+                    if (isCustom === 'custom'){
+                        const start_times = form.elements['start_time[]'];
+                        const end_times = form.elements['end_time[]'];
+                        for (let i = 0; i < days.length; i++) {
+                            if (days[i].checked) {
+                                selectedData[days[i].value] = {
+                                    start_time: start_times[i].value,
+                                    end_time: end_times[i].value
+                                }
                             }
                         }
                     }
-                    
+                    else if (isCustom === 'every_day'){
+                        for (let i = 0; i < days.length; i++){
+                            selectedData[days[i].value] = {
+                                start_time: '00:00',
+                                end_time: '23:59',
+                            }
+                        }
+                    }
+
                     chrome.runtime.sendMessage({ res_day_data: true, day_data: selectedData, user_url: message.current_url })
                 });
             }

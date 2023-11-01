@@ -173,8 +173,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
             const urls = (await chrome.storage.local.get(['urls'])).urls
             urls.splice(url_ID, 1)
             await chrome.storage.local.set({ urls: urls })
-            const updatedArr = await chrome.storage.local.get(['urls'])
-            console.log("new arr: "+updatedArr.urls);
+            
         }
     } catch (error) {
         console.log(error);
