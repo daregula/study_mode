@@ -1,16 +1,17 @@
 chrome.storage.local.clear();
 const checkStorage = async () => {
     try {
-        const isAlive = await chrome.storage.local.get(['urls'])
-        if (isAlive.urls === undefined || isAlive.urls == {}){
-            await chrome.storage.local.set({ urls: [] }, (() => {
-                console.log("local url storage space is allocated");
+        const newStruct_isAlive = await chrome.storage.local.get(['urls_obj'])
         
-            }));
+        // this is our new struct that we are creating in parallel to our old struct
+        if (newStruct_isAlive.urls_obj === undefined || newStruct_isAlive.urls_obj == {}){
+            await chrome.storage.local.set({ urls_obj : {} }, (() => {
+                console.log("local url obj storage space is allocated");
+            }))
         }
         else {
-            const bs = await chrome.storage.local.get(['urls'])
-            console.log('current list of urls in local storage: ' + bs.urls);
+            const stored_urls = await chrome.storage.local.get(['urls_obj'])
+            console.log("current stored urls: " + stored_urls.urls_obj);
         }
     } catch (error) {
         console.log(error);
@@ -20,8 +21,8 @@ checkStorage();
 // retrieving a message saying open tab true to see if we can open a tab with the chrome api     
 chrome.runtime.onMessage.addListener(async (message) => {
     try {
-        if (message.toOpen){
-            const current_url = 'https://'+message.user_url           
+        if (message.toOpen || message.edit_url){
+            const current_url = message.user_url           
             console.log(current_url);
             chrome.windows.create({
                 'url': 'add_url.html',
@@ -45,18 +46,21 @@ chrome.runtime.onMessage.addListener(async (message) => {
 chrome.runtime.onMessage.addListener(async (message) => {
     try {
         if(message.res_day_data){
-            let bs = await chrome.storage.local.get(['urls'])
-            bs.urls.push(
-                {
-                    address: message.user_url,
-                    toOpen: message.day_data
-                }
-            )
-            await chrome.storage.local.set({ urls: bs.urls })
-            const updatedArr = await chrome.storage.local.get(['urls'])
-            console.log(updatedArr.urls);
-            
+                        
+            // the struct in parallel starts here
+            let updated_urls_obj = await chrome.storage.local.get(['urls_obj']);
 
+            updated_urls_obj.urls_obj[message.user_url] = 
+            {
+                address: message.user_url,
+                toOpen: message.day_data
+            }
+            await chrome.storage.local.set({ urls_obj: updated_urls_obj.urls_obj });
+            updated_urls_obj = await chrome.storage.local.get(['urls_obj']);
+
+            console.log(updated_urls_obj.urls_obj);
+            const focused_window = await chrome.windows.getLastFocused();
+            chrome.windows.remove(focused_window.id);
         }
     } catch (error) {
         
@@ -66,28 +70,33 @@ chrome.runtime.onMessage.addListener(async (message) => {
 /* create a function that will validate the urls depending on our current date time
  if valid then we append to an array that we will then map through to create tabs from it
  current stored urls structure
- urls = [
-    {
-        address: 'url',
-        toOpen: 
+ urls = {
+        'url': 
         {
-            day_of_the_week(mon): 
+            address: 'url',
+            toOpen: 
             {
-                startTime: '12:00',
-                endTime: '14:00'
-            },
-            day_of_the_week(wed): 
-            {
-                startTime: '15:00',
-                endTime: '18:00'
+                day_of_the_week(mon): 
+                {
+                    startTime: '12:00',
+                    endTime: '14:00'
+                },
+                day_of_the_week(wed): 
+                {
+                    startTime: '15:00',
+                    endTime: '18:00'
+                }
             }
         }
     }
- ]
  
 */ 
 const validateURLs = async () => {
-    const updatedArr = await chrome.storage.local.get(['urls']);
+    // in parallel new struct 
+
+    const updated_urls_obj = await chrome.storage.local.get(['urls_obj']);
+    // between these comments
+
     const date = new Date();
     const day = date.toDateString().slice(0,3).toLowerCase();
     const hour = date.getHours();
@@ -95,25 +104,30 @@ const validateURLs = async () => {
 
     const current_time = hour * 60 + min;
 
-    let validUrls = [];
-    updatedArr.urls.map((urlOBJ) => {
-        if (urlOBJ.toOpen.hasOwnProperty(day)){
-            const current_start_time = Number(urlOBJ.toOpen[day].start_time.slice(0,2)) * 60 + Number(urlOBJ.toOpen[day].start_time.slice(3,5));
+    //here we are essentially doing the same thing above but restructuring it to loop through 
+    //our new structure instead of just an array 
+    let obj_validUrls = [];
+   
+    for (const key in updated_urls_obj.urls_obj) {
 
-            const current_end_time = Number(urlOBJ.toOpen[day].end_time.slice(0,2)) * 60 + Number(urlOBJ.toOpen[day].end_time.slice(3,5));
+        if (updated_urls_obj.urls_obj[key].toOpen.hasOwnProperty(day)){
+            const current_start_time = Number(updated_urls_obj.urls_obj[key].toOpen[day].start_time.slice(0,2)) * 60 + Number(updated_urls_obj.urls_obj[key].toOpen[day].start_time.slice(3,5));
+            
+            const current_end_time = Number(updated_urls_obj.urls_obj[key].toOpen[day].end_time.slice(0,2)) * 60 + Number(updated_urls_obj.urls_obj[key].toOpen[day].end_time.slice(3,5));
 
             if (
                 (current_start_time <= current_end_time && current_time >= current_start_time && current_time <= current_end_time) ||
                 (current_start_time > current_end_time && (current_time >= current_start_time || current_time <= current_end_time))
             )
             {
-                validUrls.push(urlOBJ.address);
+                obj_validUrls.push(key);
             }
-        } 
-    });
 
-    await chrome.storage.local.set({ valid_urls: validUrls})
-    
+        }
+    }
+    // 
+    await chrome.storage.local.set({ obj_validUrls: obj_validUrls})
+
 } 
 
 chrome.runtime.onMessage.addListener(async (message) => {
@@ -121,12 +135,15 @@ chrome.runtime.onMessage.addListener(async (message) => {
         if (message.openTab){
         // check if they have saved anything to local storage
         async function checkUrls(){
-            const userSavedUrls = await chrome.storage.local.get(['valid_urls'])
-            console.log(userSavedUrls.valid_urls);
-            return userSavedUrls.valid_urls.length != 0 && userSavedUrls.valid_urls != undefined ? 
+            
+            const obj_userSavedUrls = await chrome.storage.local.get(['obj_validUrls'])
+
+            console.log(obj_userSavedUrls.obj_validUrls, " from new ");
+            
+            return obj_userSavedUrls.obj_validUrls.length != 0 && obj_userSavedUrls.obj_validUrls != undefined ? 
             { 
                 status: true,
-                urls: userSavedUrls.valid_urls 
+                urls: obj_userSavedUrls.obj_validUrls
             } : false
 
         }
@@ -153,7 +170,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
     
 })
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener( async (message) => {
     if (message.seeSites){
         chrome.windows.create({
             'url': 'savedSites.html',
@@ -161,6 +178,7 @@ chrome.runtime.onMessage.addListener((message) => {
             'width': 250,
             'height': 250
         });
+        
     }
 })
 
@@ -170,10 +188,14 @@ chrome.runtime.onMessage.addListener(async (message) => {
         if (message.confirm_delete) {
             const url_ID = message.remove_url;
             console.log(url_ID);
-            const urls = (await chrome.storage.local.get(['urls'])).urls
-            urls.splice(url_ID, 1)
-            await chrome.storage.local.set({ urls: urls })
-            
+
+            const urls_obj = (await chrome.storage.local.get(['urls_obj'])).urls_obj
+            console.log("Before ",urls_obj);
+            delete urls_obj[url_ID];
+            await chrome.storage.local.set({ urls_obj: urls_obj });
+            console.log("after ",urls_obj);
+            chrome.runtime.sendMessage({ url_list_status: true });
+                        
         }
     } catch (error) {
         console.log(error);

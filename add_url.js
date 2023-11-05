@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     chrome.runtime.sendMessage({ res_day_data: true, day_data: selectedData, user_url: message.current_url })
                 });
+                
             }
             else{
                 console.log("message was not recieved");
