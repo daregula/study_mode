@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let display_saved_urls = [];
         console.log(obj_user_urls.urls_obj);
         Object.keys(obj_user_urls.urls_obj).forEach((key) => {
-            display_saved_urls.push("<li id='URL' class='flex flex-row'>" + `${key}` + `"<img src='./icons/trash.svg' alt='trash icon' class='h-4 w-8 hover:cursor-pointer delete_btn' value='${key}'/> <img src='./icons/gear.svg' alt='gear icon' class='h-4 w-8 hover:cursor-pointer settings_btn' value='${key}'/></li>"`)
+            display_saved_urls.push("<li id='URL' class='flex flex-row font-body text-[13px] gap-2'>" + `${key}` + `<button class='w-20 hover:cursor-pointer delete_btn bg-red-600 rounded p-1 text-white font-medium ' value='${key}'/> Delete </button> <button class='w-20 hover:cursor-pointer settings_btn bg-yellow-500 rounded p-1 text-white font-medium' value='${key}'/> Edit </button></li>`)
         });
 
         return display_saved_urls

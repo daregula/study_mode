@@ -1,15 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    document.getElementById('dismiss').addEventListener('click', function() {
+    document.getElementById('dismiss').addEventListener('click', () => {
         window.close();
     })
 
-
-    document.getElementById('restart').addEventListener('click', function() {
-        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-            chrome.runtime.sendMessage({ startTimer: true, restart: true });
-            window.close();
-        });
+    document.getElementById('restart').addEventListener('click', async () => {
+        await chrome.runtime.sendMessage({ restart: true });
+        window.close();
     });
 
 

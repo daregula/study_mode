@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Timer</title>
     <script src="alert.js"></script>
-    
+    <link rel="stylesheet" href="/dist/output.css">
 </head>
-<body>
-    <p>Your timer is up. Take a break you deserve it</p>
-    <button id="dismiss">Dismiss</button>
-    <button id="restart">Restart Timer</button>
+<body class="font-body flex flex-col gap-3">
+    <p class="text-[14px] mx-11">Timer expired.<br> Take a break you deserve it</p>
+    <button id="dismiss" class="bg-red-600 rounded p-1 text-white w-24  mx-11">Dismiss</button>
+    <button id="restart" class="bg-green-600 rounded p-1 text-white w-24  mx-11">Restart Timer</button>
 </body>
 </html>
