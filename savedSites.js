@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchUrls = async () => {
         const obj_user_urls = await chrome.storage.local.get(['urls_obj'])
         let display_saved_urls = [];
-        console.log(obj_user_urls.urls_obj);
+        
         Object.keys(obj_user_urls.urls_obj).forEach((key) => {
             display_saved_urls.push("<li id='URL' class='flex flex-row font-body text-[13px] gap-2'>" + `${key}` + `<button class='w-20 hover:cursor-pointer delete_btn bg-red-600 rounded p-1 text-white font-medium ' value='${key}'/> Delete </button> <button class='w-20 hover:cursor-pointer settings_btn bg-yellow-500 rounded p-1 text-white font-medium' value='${key}'/> Edit </button></li>`)
         });

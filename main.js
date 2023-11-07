@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded',function() {
 
 
     let minutesElement = document.getElementById('minutes');
-    
 
     let minutes = 0;
 

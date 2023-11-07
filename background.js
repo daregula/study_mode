@@ -6,14 +6,9 @@ const checkStorage = async () => {
         
         // this is our new struct that we are creating in parallel to our old struct
         if (newStruct_isAlive.urls_obj === undefined || newStruct_isAlive.urls_obj == {}){
-            await chrome.storage.local.set({ urls_obj : {} }, (() => {
-                console.log("local url obj storage space is allocated");
-            }))
+            await chrome.storage.local.set({ urls_obj : {} })
         }
-        else {
-            const stored_urls = await chrome.storage.local.get(['urls_obj'])
-            console.log("current stored urls: " + stored_urls.urls_obj);
-        }
+    
     } catch (error) {
         console.log(error);
     }
@@ -24,7 +19,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
     try {
         if (message.toOpen || message.edit_url){
             const current_url = message.user_url           
-            console.log(current_url);
+            
             chrome.windows.create({
                 'url': 'add_url.html',
                 'type': 'popup',
@@ -59,7 +54,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
             await chrome.storage.local.set({ urls_obj: updated_urls_obj.urls_obj });
             updated_urls_obj = await chrome.storage.local.get(['urls_obj']);
 
-            console.log(updated_urls_obj.urls_obj);
+            
             const focused_window = await chrome.windows.getLastFocused();
             chrome.windows.remove(focused_window.id);
         }
@@ -86,6 +81,7 @@ const validateURLs = async () => {
     //our new structure instead of just an array 
     let obj_validUrls = [];
    
+    // parsing the string and getting it ready to read and process 
     for (const key in updated_urls_obj.urls_obj) {
 
         if (updated_urls_obj.urls_obj[key].toOpen.hasOwnProperty(day)){
@@ -114,8 +110,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
         async function checkUrls(){
             
             const obj_userSavedUrls = await chrome.storage.local.get(['obj_validUrls'])
-
-            console.log(obj_userSavedUrls.obj_validUrls, " from new ");
             
             return obj_userSavedUrls.obj_validUrls.length != 0 && obj_userSavedUrls.obj_validUrls != undefined ? 
             { 
@@ -164,13 +158,11 @@ chrome.runtime.onMessage.addListener(async (message) => {
     try {
         if (message.confirm_delete) {
             const url_ID = message.remove_url;
-            console.log(url_ID);
-
+            
             const urls_obj = (await chrome.storage.local.get(['urls_obj'])).urls_obj
-            console.log("Before ",urls_obj);
+            
             delete urls_obj[url_ID];
             await chrome.storage.local.set({ urls_obj: urls_obj });
-            console.log("after ",urls_obj);
             chrome.runtime.sendMessage({ url_list_status: true });
                         
         }
