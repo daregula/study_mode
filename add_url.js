@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
      // getting the url form values to get the users set days and times to have the urls open
-   
-    // displaying the current url thats been added to the add url popup
-    document.getElementById('current_url').innerHTML = "shalom"
     
     chrome.runtime.sendMessage({ popUpOpen: true })
 

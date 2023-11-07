@@ -71,33 +71,10 @@ chrome.runtime.onMessage.addListener(async (message) => {
 /* create a function that will validate the urls depending on our current date time
  if valid then we append to an array that we will then map through to create tabs from it
  current stored urls structure
- urls = {
-        'url': 
-        {
-            address: 'url',
-            toOpen: 
-            {
-                day_of_the_week(mon): 
-                {
-                    startTime: '12:00',
-                    endTime: '14:00'
-                },
-                day_of_the_week(wed): 
-                {
-                    startTime: '15:00',
-                    endTime: '18:00'
-                }
-            }
-        }
-    }
- 
 */ 
 const validateURLs = async () => {
-    // in parallel new struct 
-
     const updated_urls_obj = await chrome.storage.local.get(['urls_obj']);
-    // between these comments
-
+    
     const date = new Date();
     const day = date.toDateString().slice(0,3).toLowerCase();
     const hour = date.getHours();
@@ -126,7 +103,6 @@ const validateURLs = async () => {
 
         }
     }
-    // 
     await chrome.storage.local.set({ obj_validUrls: obj_validUrls})
 
 } 
@@ -281,7 +257,6 @@ const run_timer = async (timer_val, start) => {
             
         }, 1000 );
     } 
-    
 
 } 
 
@@ -301,75 +276,3 @@ chrome.runtime.onMessage.addListener(async (message) => {
         run_timer(time.restart_val, message.restart);
     }
 })
-
-
-
-// chrome.runtime.onMessage.addListener(async function(request) {
-//     const timerStat = await chrome.storage.session.get(['timerRunning']);
-//     let resumeTime = request.timerform
-
-//     const isPaused = await chrome.storage.session.get(['pauseTimer']);
-    
-//     if (request.startTimer && !timerStat.timerRunning) {
-
-//         if (isPaused.pauseTimer === true){
-//             const pausedAt = await chrome.storage.session.get(['pauseValue']);
-//             resumeTime = pausedAt.pauseValue / 60;
-//             chrome.storage.session.set({ pauseTimer: false });
-//         }
-//         chrome.storage.session.set({ timerRunning: true });
-//         chrome.action.setBadgeBackgroundColor({ color: [74, 0, 72, 39]});
-        
-        
-//         var timer = resumeTime * 60;
-        
-//         // creating an interval to run our timer function that will in realtime set the new time every 1 second
-//         // we created the call back function 
-//         var intervalId = setInterval(function() {
-//             // dont think ill ever need below code but gonna keep for now
-//             // will reset the timer anytime any other message is recieved
-//             timer--;
-//             var minutes = Math.floor(timer/60);
-//             var seconds = timer % 60;
-//             var text = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-
-//             chrome.runtime.onMessage.addListener((request) => {
-//                 if (request.stopTimer){
-//                     clearInterval(intervalId);
-                    
-//                     chrome.storage.session.set({ timerRunning: false});
-//                     chrome.storage.session.set({ pauseTimer: false });
-//                     chrome.action.setBadgeText({ text: ''});
-
-//                 }
-//             });
-//             chrome.runtime.onMessage.addListener((message) => {
-//                 if (message.pauseTimer){
-//                     clearInterval(intervalId);
-                    
-//                     chrome.storage.session.set({ pauseTimer: true, pauseValue: timer, timerRunning: false })
-//                     chrome.action.setBadgeText({ text: text })
-//                 }
-//             });
-            
-
-//             chrome.action.setBadgeText({ text: text });
-//             if (timer === 0) {
-//                 clearInterval(intervalId);
-//                 chrome.windows.create({
-//                     'url': 'alert.html',
-//                     'type': 'popup',
-//                     'width': 200,
-//                     'height': 210
-//                 });
-//                 chrome.storage.session.set({ timerRunning: false});
-//                 chrome.action.setBadgeText({ text: ''});
-//                 chrome.action.setBadgeBackgroundColor({ color: [190, 190, 190, 230] });
-                
-//             }
-            
-            
-//         }, 1000 );
-//     } 
-    
-// });
