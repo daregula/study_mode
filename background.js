@@ -1,5 +1,3 @@
-chrome.storage.local.clear();
-
 const checkStorage = async () => {
     try {
         const newStruct_isAlive = await chrome.storage.local.get(['urls_obj'])
