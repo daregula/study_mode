@@ -3,10 +3,8 @@
     "name": "Study Mode",
     "description": "A chrome extension to help anyone that wants to enhance their study sessions",
     "permissions": [
-        "tabs",
         "storage",
-        "activeTab",
-        "notifications"
+        "activeTab"
     ],
     "version": "1.0",
     "action": {
